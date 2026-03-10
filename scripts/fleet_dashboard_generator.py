@@ -1721,6 +1721,7 @@ def build_html(report_date, aircraft_list, components, component_changes, flight
 <meta http-equiv="Expires" content="0">
 <title>{_org} - Fleet Due List</title>
 <link rel="icon" href="data:,">
+<link href="https://cdn.jsdelivr.net/npm/@tabler/core@1.4.0/dist/css/tabler.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {{
@@ -1734,6 +1735,8 @@ def build_html(report_date, aircraft_list, components, component_changes, flight
   *{{margin:0;padding:0;box-sizing:border-box;}}
   body{{background:var(--bg);color:var(--text);font-family:var(--body);min-height:100vh;overflow-x:hidden;}}
   body::before{{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);pointer-events:none;z-index:1000;}}
+  .page{{background:transparent;}}
+  .container-xl{{max-width:1600px;}}
   header{{background:var(--surface);border-bottom:1px solid var(--border);padding:18px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}}
   .header-left{{display:flex;align-items:center;gap:0;}}
   .logo{{font-family:var(--sans);font-weight:900;font-size:22px;letter-spacing:3px;color:var(--heading);text-transform:uppercase;}}
@@ -1750,10 +1753,10 @@ def build_html(report_date, aircraft_list, components, component_changes, flight
   .dot-red{{background:var(--red);box-shadow:0 0 6px var(--red);}}
   .dot-overdue{{background:var(--overdue);box-shadow:0 0 6px var(--overdue);}}
   main{{padding:24px 32px;max-width:1600px;margin:0 auto;}}
-  .tabs{{display:flex;gap:0;margin-bottom:24px;border-bottom:2px solid var(--border);}}
-  .tab-btn{{font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:12px 24px;background:transparent;border:none;color:var(--muted);cursor:pointer;transition:all 0.2s;border-bottom:3px solid transparent;}}
-  .tab-btn:hover{{color:var(--text);background:rgba(255,255,255,0.02);}}
-  .tab-btn.active{{color:var(--blue);border-bottom-color:var(--blue);}}
+  .tabs{{display:flex;gap:8px;margin-bottom:24px;border-bottom:1px solid var(--border);padding-bottom:8px;flex-wrap:wrap;}}
+  .tab-btn{{font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;padding:8px 14px;background:var(--surface);border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:all 0.2s;border-radius:999px;}}
+  .tab-btn:hover{{color:var(--text);background:var(--surface2);}}
+  .tab-btn.active{{color:#0a0c0f;border-color:var(--blue);background:var(--blue);}}
   .tab-content{{display:none;}}
   .tab-content.active{{display:block;}}
   .summary-bar{{display:flex;gap:16px;margin-bottom:24px;flex-wrap:wrap;}}
@@ -1830,8 +1833,9 @@ def build_html(report_date, aircraft_list, components, component_changes, flight
 </style>
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
 </head>
-<body>
-<header>
+<body class="theme-dark">
+<div class="page">
+<header class="navbar navbar-expand-md d-print-none">
   <div class="header-left">
     <div>
       <div class="logo">{_org_first}<span>{_org_rest.upper()}</span></div>
@@ -1851,13 +1855,13 @@ def build_html(report_date, aircraft_list, components, component_changes, flight
   <div class="legend-item"><div class="dot dot-overdue"></div> Past Due / Overdue</div>
   <div style="margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:1px;">- = Not due this cycle</div>
 </div>
-<main>
+<div class="page-wrapper"><div class="page-body"><main class="container-xl">
   <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('maintenance',this)">Maintenance Due List</button>
-    <button class="tab-btn" onclick="switchTab('flight-hours',this)">Flight Hours Tracking</button>
-    <button class="tab-btn" onclick="switchTab('component-changes',this)">Component Changes</button>
-    <button class="tab-btn" onclick="switchTab('calendar',this)">Calendar</button>
-    <button class="tab-btn" onclick="switchTab('location',this)">Aircraft Location</button>
+    <button class="tab-btn btn btn-pill active" onclick="switchTab('maintenance',this)">Maintenance Due List</button>
+    <button class="tab-btn btn btn-pill" onclick="switchTab('flight-hours',this)">Flight Hours Tracking</button>
+    <button class="tab-btn btn btn-pill" onclick="switchTab('component-changes',this)">Component Changes</button>
+    <button class="tab-btn btn btn-pill" onclick="switchTab('calendar',this)">Calendar</button>
+    <button class="tab-btn btn btn-pill" onclick="switchTab('location',this)">Aircraft Location</button>
   </div>
 
   <!-- MAINTENANCE TAB -->
@@ -1922,12 +1926,14 @@ def build_html(report_date, aircraft_list, components, component_changes, flight
   <div id="tab-location" class="tab-content">
 {location_tab_html}
   </div>
-</main>
-<footer>
+</main></div></div>
+<footer class="container-xl">
   <span>SOURCE: VERYON MAINTENANCE TRACKING &nbsp;|&nbsp; {source_filename}</span>
   <span>IHC HEALTH SERVICES - AVIATION MAINTENANCE</span>
 </footer>
+</div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.4.0/dist/js/tabler.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 <script>
   const DASHBOARD_VERSION = "{version}";
