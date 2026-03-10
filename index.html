@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IHC Fleet Dashboard</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/@tabler/core@1.4.0/dist/css/tabler.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="page">
+      <header class="navbar navbar-expand-md navbar-light d-print-none">
+        <div class="container-xl">
+          <h1 class="navbar-brand">IHC Fleet Dashboard</h1>
+        </div>
+      </header>
+
+      <div class="page-wrapper">
+        <div class="page-header d-print-none">
+          <div class="container-xl">
+            <div class="row g-2 align-items-center">
+              <div class="col">
+                <h2 class="page-title">Fleet maintenance overview</h2>
+                <div class="text-secondary mt-1">
+                  Tabler-based layout ready to publish on GitHub Pages.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="page-body">
+          <div class="container-xl">
+            <div class="row row-deck row-cards">
+              <div class="col-sm-6 col-lg-3">
+                <div class="card card-sm">
+                  <div class="card-body">
+                    <div class="row align-items-center">
+                      <div class="col-auto">
+                        <span class="bg-primary text-white avatar">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-helicopter" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h18"/><path d="M7 10l1.5 5.5a1 1 0 0 0 .96.75h5.08a1 1 0 0 0 .96-.75L17 10"/><path d="M12 10V3"/><path d="M6 13h12"/><path d="M7 16h10"/><path d="M10 20h4"/></svg>
+                        </span>
+                      </div>
+                      <div class="col">
+                        <div class="font-weight-medium">12 Active Aircraft</div>
+                        <div class="text-secondary">Fleet currently tracked</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-sm-6 col-lg-3">
+                <div class="card card-sm">
+                  <div class="card-body">
+                    <div class="font-weight-medium">9 Due in 7 Days</div>
+                    <div class="text-secondary">Upcoming maintenance items</div>
+                    <div class="progress progress-sm mt-3">
+                      <div class="progress-bar bg-azure" style="width: 52%"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-sm-6 col-lg-3">
+                <div class="card card-sm">
+                  <div class="card-body">
+                    <div class="font-weight-medium text-danger">3 Overdue</div>
+                    <div class="text-secondary">Needs immediate attention</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-sm-6 col-lg-3">
+                <div class="card card-sm">
+                  <div class="card-body">
+                    <div class="font-weight-medium">4 Aircraft Away</div>
+                    <div class="text-secondary">Not at assigned base</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h3 class="card-title">Maintenance Due List</h3>
+                  </div>
+                  <div class="table-responsive">
+                    <table class="table table-vcenter card-table">
+                      <thead>
+                        <tr>
+                          <th>Tail #</th>
+                          <th>Inspection</th>
+                          <th>Remaining</th>
+                          <th>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>N109AA</td>
+                          <td>800 Hour</td>
+                          <td>6.2 hours</td>
+                          <td><span class="badge bg-yellow text-yellow-fg">Due Soon</span></td>
+                        </tr>
+                        <tr>
+                          <td>N109BB</td>
+                          <td>200 Hour</td>
+                          <td>-3.5 hours</td>
+                          <td><span class="badge bg-red text-red-fg">Overdue</span></td>
+                        </tr>
+                        <tr>
+                          <td>N109CC</td>
+                          <td>50 Hour</td>
+                          <td>22.8 hours</td>
+                          <td><span class="badge bg-green text-green-fg">On Track</span></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.4.0/dist/js/tabler.min.js"></script>
+  </body>
+</html>
