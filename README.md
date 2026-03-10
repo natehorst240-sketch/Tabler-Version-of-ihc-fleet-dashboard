@@ -4,12 +4,10 @@ A lightweight, automated web dashboard that turns CAMP CSV exports into a
 live, interactive maintenance-tracking page hosted on GitHub Pages. Push a
 new CSV and the dashboard rebuilds itself — no server required.
 
-## Tabler UI starter page
+## Automated page generation
 
-This repository now includes a root-level `index.html` built with Tabler UI
-components and a GitHub Actions workflow at
-`.github/workflows/deploy-pages.yml` that deploys the page to GitHub Pages on
-every push to `main`.
+GitHub Pages deploys the generated dashboard from `data/index.html`, which is
+built by `scripts/fleet_dashboard_generator.py` during the deploy workflow.
 
 ---
 ## If this breaks last good commit was 1 parent be376f5 commit 19958e8
@@ -26,7 +24,7 @@ every push to `main`.
              │  git push to main             │
              ▼                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│               GitHub Actions  (build_dashboard.yml)             │
+│             GitHub Actions  (deploy-pages.yml)                  │
 │                                                                 │
 │  1. Checkout repo                                               │
 │  2. pip install Pillow                                          │
@@ -36,7 +34,7 @@ every push to `main`.
 │     ├─ Load / update flight_hours_history.json               │  │
 │     ├─ Load base_assignments.json (GPS positions)            │  │
 │     └─ Embed fleet photo (IMG_9250.jpeg, base64)             │  │
-│  4. Commit generated files back to repo                      │  │
+│  4. Upload generated data/ as the Pages artifact                │
 │     • data/index.html                ◄──────────────────────┘  │
 │     • data/flight_hours_history.json                            │
 │     • data/dashboard_version.json                               │
@@ -46,7 +44,7 @@ every push to `main`.
 ┌─────────────────────────────────────────────────────────────────┐
 │              GitHub Actions  (deploy-pages.yml)                 │
 │                                                                 │
-│  Deploys data/ folder → GitHub Pages                            │
+│  Deploys generated data/ folder → GitHub Pages                  │
 └────────────────────────────┬────────────────────────────────────┘
                              │
                              ▼
@@ -119,8 +117,7 @@ git push
 ```
 ihc-fleet-dashboard/
 ├── .github/workflows/
-│   ├── build_dashboard.yml      # Builds index.html on CSV push
-│   └── deploy-pages.yml         # Deploys data/ to GitHub Pages
+│   └── deploy-pages.yml         # Builds + deploys data/ to GitHub Pages
 ├── data/
 │   ├── Due-List_BIG_WEEKLY_aw109sp.csv   # CAMP due-list export (input)
 │   ├── ComponentChangeReport_109SP.csv   # Component change export (input)

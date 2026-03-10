@@ -1721,6 +1721,7 @@ def build_html(report_date, aircraft_list, components, component_changes, flight
 <meta http-equiv="Expires" content="0">
 <title>{_org} - Fleet Due List</title>
 <link rel="icon" href="data:,">
+<link href="https://cdn.jsdelivr.net/npm/@tabler/core@1.4.0/dist/css/tabler.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {{
@@ -1749,11 +1750,11 @@ def build_html(report_date, aircraft_list, components, component_changes, flight
   .dot-amber{{background:var(--amber);box-shadow:0 0 6px var(--amber);}}
   .dot-red{{background:var(--red);box-shadow:0 0 6px var(--red);}}
   .dot-overdue{{background:var(--overdue);box-shadow:0 0 6px var(--overdue);}}
-  main{{padding:24px 32px;max-width:1600px;margin:0 auto;}}
-  .tabs{{display:flex;gap:0;margin-bottom:24px;border-bottom:2px solid var(--border);}}
-  .tab-btn{{font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:12px 24px;background:transparent;border:none;color:var(--muted);cursor:pointer;transition:all 0.2s;border-bottom:3px solid transparent;}}
+  main{{padding:24px 16px;max-width:1600px;margin:0 auto;}}
+  .tabs{{display:flex;gap:8px;margin-bottom:24px;border-bottom:0;flex-wrap:wrap;}}
+  .tab-btn{{font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:all 0.2s;border-radius:6px;}}
   .tab-btn:hover{{color:var(--text);background:rgba(255,255,255,0.02);}}
-  .tab-btn.active{{color:var(--blue);border-bottom-color:var(--blue);}}
+  .tab-btn.active{{color:#0b0f14;background:var(--blue);border-color:var(--blue);}}
   .tab-content{{display:none;}}
   .tab-content.active{{display:block;}}
   .summary-bar{{display:flex;gap:16px;margin-bottom:24px;flex-wrap:wrap;}}
@@ -1830,8 +1831,8 @@ def build_html(report_date, aircraft_list, components, component_changes, flight
 </style>
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
 </head>
-<body>
-<header>
+<body data-bs-theme="dark">
+<header class="navbar navbar-expand-md navbar-dark d-print-none">
   <div class="header-left">
     <div>
       <div class="logo">{_org_first}<span>{_org_rest.upper()}</span></div>
@@ -1844,32 +1845,32 @@ def build_html(report_date, aircraft_list, components, component_changes, flight
     <div>FLEET: {total_ac} AIRCRAFT &nbsp;|&nbsp; {airborne_count} AIRBORNE &nbsp;|&nbsp; {at_base_count} AT BASE &nbsp;|&nbsp; GENERATED: {gen_time}</div>
   </div>
 </header>
-<div class="legend">
+<div class="legend card card-body">
   <div class="legend-item"><div class="dot dot-green"></div> OK (&gt;100 hrs)</div>
   <div class="legend-item"><div class="dot dot-amber"></div> Coming Due (26-100 hrs)</div>
   <div class="legend-item"><div class="dot dot-red"></div> Critical (0-25 hrs)</div>
   <div class="legend-item"><div class="dot dot-overdue"></div> Past Due / Overdue</div>
   <div style="margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:1px;">- = Not due this cycle</div>
 </div>
-<main>
-  <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('maintenance',this)">Maintenance Due List</button>
-    <button class="tab-btn" onclick="switchTab('flight-hours',this)">Flight Hours Tracking</button>
-    <button class="tab-btn" onclick="switchTab('component-changes',this)">Component Changes</button>
-    <button class="tab-btn" onclick="switchTab('calendar',this)">Calendar</button>
-    <button class="tab-btn" onclick="switchTab('location',this)">Aircraft Location</button>
+<main class="container-xl">
+  <div class="tabs nav nav-pills">
+    <button class="tab-btn nav-link active" onclick="switchTab('maintenance',this)">Maintenance Due List</button>
+    <button class="tab-btn nav-link" onclick="switchTab('flight-hours',this)">Flight Hours Tracking</button>
+    <button class="tab-btn nav-link" onclick="switchTab('component-changes',this)">Component Changes</button>
+    <button class="tab-btn nav-link" onclick="switchTab('calendar',this)">Calendar</button>
+    <button class="tab-btn nav-link" onclick="switchTab('location',this)">Aircraft Location</button>
   </div>
 
   <!-- MAINTENANCE TAB -->
   <div id="tab-maintenance" class="tab-content active">
     <div class="summary-bar">
-      <div class="summary-stat"><div class="stat-value" style="color:var(--blue)">{total_ac}</div><div class="divider-line" style="background:var(--blue)"></div><div class="stat-label">Aircraft</div></div>
-      <div class="summary-stat"><div class="stat-value" style="color:var(--blue)">{airborne_count}</div><div class="divider-line" style="background:var(--blue)"></div><div class="stat-label">Airborne</div></div>
-      <div class="summary-stat"><div class="stat-value" style="color:var(--red)">{crit_count}</div><div class="divider-line" style="background:var(--red)"></div><div class="stat-label">Insp. Critical / OD</div></div>
-      <div class="summary-stat"><div class="stat-value" style="color:var(--amber)">{coming_count}</div><div class="divider-line" style="background:var(--amber)"></div><div class="stat-label">Insp. Coming Due</div></div>
-      <div class="summary-stat"><div class="stat-value" style="color:var(--overdue)">{comp_overdue}</div><div class="divider-line" style="background:var(--overdue)"></div><div class="stat-label">Components Overdue</div></div>
+      <div class="summary-stat card card-body"><div class="stat-value" style="color:var(--blue)">{total_ac}</div><div class="divider-line" style="background:var(--blue)"></div><div class="stat-label">Aircraft</div></div>
+      <div class="summary-stat card card-body"><div class="stat-value" style="color:var(--blue)">{airborne_count}</div><div class="divider-line" style="background:var(--blue)"></div><div class="stat-label">Airborne</div></div>
+      <div class="summary-stat card card-body"><div class="stat-value" style="color:var(--red)">{crit_count}</div><div class="divider-line" style="background:var(--red)"></div><div class="stat-label">Insp. Critical / OD</div></div>
+      <div class="summary-stat card card-body"><div class="stat-value" style="color:var(--amber)">{coming_count}</div><div class="divider-line" style="background:var(--amber)"></div><div class="stat-label">Insp. Coming Due</div></div>
+      <div class="summary-stat card card-body"><div class="stat-value" style="color:var(--overdue)">{comp_overdue}</div><div class="divider-line" style="background:var(--overdue)"></div><div class="stat-label">Components Overdue</div></div>
     </div>
-    <div class="chart-card">
+    <div class="chart-card card card-body">
       <div class="chart-title">200 Hr Remaining (Bar)</div>
       <canvas id="bar200"></canvas>
     </div>
@@ -1881,8 +1882,8 @@ def build_html(report_date, aircraft_list, components, component_changes, flight
       <button class="filter-btn" onclick="filterTable('coming',this)">Coming Due</button>
       <button class="filter-btn" onclick="filterTable('ok',this)">OK</button>
     </div>
-    <div class="insp-table-wrap">
-      <table>
+    <div class="insp-table-wrap table-responsive">
+      <table class="table table-vcenter card-table">
         <thead>
           <tr>
             <th>Aircraft</th>
@@ -1927,6 +1928,7 @@ def build_html(report_date, aircraft_list, components, component_changes, flight
   <span>SOURCE: VERYON MAINTENANCE TRACKING &nbsp;|&nbsp; {source_filename}</span>
   <span>IHC HEALTH SERVICES - AVIATION MAINTENANCE</span>
 </footer>
+<script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.4.0/dist/js/tabler.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 <script>
