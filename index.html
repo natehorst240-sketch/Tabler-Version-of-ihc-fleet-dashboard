@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,12 +8,41 @@
       href="https://cdn.jsdelivr.net/npm/@tabler/core@1.4.0/dist/css/tabler.min.css"
       rel="stylesheet"
     />
+    <link
+      href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+      }
+
+      .fc .fc-toolbar-title {
+        font-size: 1rem;
+        color: var(--tblr-body-color);
+      }
+
+      .fc .fc-button {
+        background: var(--tblr-primary);
+        border-color: var(--tblr-primary);
+      }
+
+      .fc .fc-daygrid-day.fc-day-today {
+        background: rgba(var(--tblr-primary-rgb), 0.08);
+      }
+
+      #maintenance-calendar {
+        min-height: 520px;
+      }
+    </style>
   </head>
   <body>
     <div class="page">
-      <header class="navbar navbar-expand-md navbar-light d-print-none">
+      <header class="navbar navbar-expand-md d-print-none" data-bs-theme="dark">
         <div class="container-xl">
-          <h1 class="navbar-brand">IHC Fleet Dashboard</h1>
+          <h1 class="navbar-brand navbar-brand-autodark pe-0">IHC Fleet Dashboard</h1>
         </div>
       </header>
 
@@ -24,7 +53,7 @@
               <div class="col">
                 <h2 class="page-title">Fleet maintenance overview</h2>
                 <div class="text-secondary mt-1">
-                  Tabler-based layout ready to publish on GitHub Pages.
+                  Tabler dark-mode admin layout with a FullCalendar maintenance timeline.
                 </div>
               </div>
             </div>
@@ -82,7 +111,7 @@
                 </div>
               </div>
 
-              <div class="col-12">
+              <div class="col-12 col-xl-8">
                 <div class="card">
                   <div class="card-header">
                     <h3 class="card-title">Maintenance Due List</h3>
@@ -102,6 +131,30 @@
                   </div>
                 </div>
               </div>
+
+              <div class="col-12 col-xl-4">
+                <div class="card">
+                  <div class="card-header">
+                    <h3 class="card-title">Calendar Legend</h3>
+                  </div>
+                  <div class="card-body">
+                    <span class="badge bg-red text-red-fg me-2">Overdue</span>
+                    <span class="badge bg-yellow text-yellow-fg me-2">Due Soon</span>
+                    <span class="badge bg-green text-green-fg">On Track</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h3 class="card-title">Maintenance Calendar (Tabler FullCalendar)</h3>
+                  </div>
+                  <div class="card-body">
+                    <div id="maintenance-calendar"></div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -109,13 +162,25 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.4.0/dist/js/tabler.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
     <script>
       const DATA_FILE = "data/Due-List_BIG_WEEKLY_aw109sp.csv";
       const EXPORT_META_FILE = "data/last_flightdocs_export.json";
+      const MAX_TABLE_ROWS = 15;
+      let calendar;
 
       const toNumber = (value) => {
         const parsed = Number.parseFloat(String(value || "").trim());
         return Number.isFinite(parsed) ? parsed : null;
+      };
+
+      const parseDate = (value) => {
+        if (!value) return null;
+        const trimmed = String(value).trim();
+        const match = trimmed.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+        if (!match) return null;
+        const [, m, d, y] = match;
+        return new Date(Number(y), Number(m) - 1, Number(d));
       };
 
       const parseCsv = (text) => {
@@ -151,10 +216,59 @@
       };
 
       const statusForHours = (remainingHours) => {
-        if (remainingHours === null) return { text: "Unknown", className: "bg-secondary text-secondary-fg" };
-        if (remainingHours < 0) return { text: "Overdue", className: "bg-red text-red-fg" };
-        if (remainingHours <= 10) return { text: "Due Soon", className: "bg-yellow text-yellow-fg" };
-        return { text: "On Track", className: "bg-green text-green-fg" };
+        if (remainingHours === null) return { text: "Unknown", className: "bg-secondary text-secondary-fg", color: "#6c757d" };
+        if (remainingHours < 0) return { text: "Overdue", className: "bg-red text-red-fg", color: "#d63939" };
+        if (remainingHours <= 10) return { text: "Due Soon", className: "bg-yellow text-yellow-fg", color: "#f59f00" };
+        return { text: "On Track", className: "bg-green text-green-fg", color: "#2fb344" };
+      };
+
+      const buildCalendarEvents = (rowsWithHours) => {
+        return rowsWithHours
+          .map((row) => {
+            const dueDate = row.estimatedDueDate || row.nextDueDate;
+            if (!dueDate) return null;
+            const status = statusForHours(row.remainingHours);
+            return {
+              title: `${row.reg}: ${row.inspection}`,
+              start: dueDate,
+              allDay: true,
+              backgroundColor: status.color,
+              borderColor: status.color,
+              textColor: "#fff",
+              extendedProps: {
+                status: status.text,
+                remainingHours: row.remainingHours,
+              },
+            };
+          })
+          .filter(Boolean);
+      };
+
+      const renderCalendar = (events) => {
+        const calendarEl = document.getElementById("maintenance-calendar");
+        if (!calendarEl) return;
+
+        if (calendar) {
+          calendar.destroy();
+        }
+
+        calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: "dayGridMonth",
+          height: "auto",
+          themeSystem: "standard",
+          headerToolbar: {
+            left: "prev,next today",
+            center: "title",
+            right: "dayGridMonth,listMonth",
+          },
+          events,
+          eventDidMount(info) {
+            const { status, remainingHours } = info.event.extendedProps;
+            info.el.title = `${status} • ${remainingHours.toFixed(1)}h remaining`;
+          },
+        });
+
+        calendar.render();
       };
 
       async function loadDashboardData() {
@@ -174,6 +288,8 @@
             reg: row["Registration Number"] || "Unknown",
             inspection: row["Description"] || row["Requirement Type"] || "Inspection",
             remainingHours: toNumber(row["Remaining Hours"]),
+            estimatedDueDate: parseDate(row["Estimated Due Date"]),
+            nextDueDate: parseDate(row["Next Due Date"]),
           }))
           .filter((row) => row.remainingHours !== null)
           .sort((a, b) => a.remainingHours - b.remainingHours);
@@ -193,7 +309,7 @@
 
         const tableBody = document.getElementById("due-list-body");
         tableBody.innerHTML = "";
-        rowsWithHours.slice(0, 15).forEach((row) => {
+        rowsWithHours.slice(0, MAX_TABLE_ROWS).forEach((row) => {
           const status = statusForHours(row.remainingHours);
           const tr = document.createElement("tr");
           tr.innerHTML = `
@@ -204,6 +320,8 @@
           `;
           tableBody.appendChild(tr);
         });
+
+        renderCalendar(buildCalendarEvents(rowsWithHours));
 
         if (exportResponse && exportResponse.ok) {
           const exportInfo = await exportResponse.json();
@@ -222,6 +340,7 @@
         document.getElementById("last-updated").textContent = error.message;
         document.getElementById("due-list-body").innerHTML =
           '<tr><td colspan="4" class="text-danger">Unable to load maintenance data. Check that the data files are present in /data.</td></tr>';
+        renderCalendar([]);
       });
     </script>
   </body>
