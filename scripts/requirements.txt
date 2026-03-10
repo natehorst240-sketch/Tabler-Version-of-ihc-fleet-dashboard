@@ -1,0 +1,2 @@
+# IHC Fleet Dashboard - Python Dependencies
+Pillow>=10.0.0
