@@ -4,6 +4,13 @@ A lightweight, automated web dashboard that turns CAMP CSV exports into a
 live, interactive maintenance-tracking page hosted on GitHub Pages. Push a
 new CSV and the dashboard rebuilds itself — no server required.
 
+## Tabler UI starter page
+
+This repository now includes a root-level `index.html` built with Tabler UI
+components and a GitHub Actions workflow at
+`.github/workflows/deploy-pages.yml` that deploys the page to GitHub Pages on
+every push to `main`.
+
 ---
 ## If this breaks last good commit was 1 parent be376f5 commit 19958e8
 
